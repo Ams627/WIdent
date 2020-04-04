@@ -1,0 +1,50 @@
+= Windows Indentity Hints and Tips
+
+== What's a Windows User?
+
+A Windows user has at least the following:
+* a SID (short for Security ID)
+* a User Name
+* a home directory 
+
+=== Getting your SID
+
+To get the SID of the currently logged in user, run the following code:
+
+----
+using System;
+using System.Security.Principal;
+using System.DirectoryServices.AccountManagement;
+
+class Program
+{
+    private static void Main()
+    {
+        var user = WindowsIdentity.GetCurrent().User; <1>
+        Console.WriteLine($"{user}");
+        var sid = UserPrincipal.Current.Sid.ToString(); <2>
+        Console.WriteLine($"{sid}");
+    }
+}
+----
+<1> This is the quickest way
+<2> This works even if you are not in https://en.wikipedia.org/wiki/Active_Directory[Active Directory].
+
+
+In Powershell:
+
+----
+[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+----
+
+In CMD.exe 
+
+----
+whoami /user
+----
+
+You can also use wmic to see the SIDs of all the accounts on the computer:
+
+----
+wmic useraccount get name,sid
+----
