@@ -1,3 +1,14 @@
+:toc:
+:sectnums:
+:toclevels: 5
+:sectnumlevels: 5
+:showcomments:
+:xrefstyle: short
+:icons: font
+:source-highlighter: coderay
+:tick: &#x2714;
+:pound: &#xA3;
+
 = Windows Indentity Hints and Tips
 
 == What's a Windows User?
@@ -48,3 +59,52 @@ You can also use wmic to see the SIDs of all the accounts on the computer:
 ----
 wmic useraccount get name,sid
 ----
+
+== Translating a SID to an account name
+
+== Getting the owner of a file
+
+In CMD.EXE:
+
+----
+dir /q
+----
+
+In powershell:
+
+----
+(get-acl C:\temp\file1.txt).owner
+----
+
+in C#:
+
+----
+private static string GetFileOwner(string filename)
+{
+	FileSecurity fileSecurity = File.GetAccessControl(filename);
+	IdentityReference identityReference = fileSecurity.GetOwner(typeof(SecurityIdentifier));
+	NTAccount ntAccount = identityReference.Translate(typeof(NTAccount)) as NTAccount;
+	return ntAccount.Value;
+}
+----
+
+== Getting a list of local groups
+
+This can be done in powershell as follows:
+
+----
+Get-LocalGroup
+----
+
+To get the SID of a specific group, do the following:
+
+----
+(Get-LocalGroup administrators).sid 
+----
+
+To get a list of group members:
+
+----
+Get-LocalGroupMember administrators
+----
+
